@@ -1,46 +1,69 @@
-import { View, SafeAreaView, StyleSheet, FlatList } from 'react-native';
-import { List, Text, IconButton, Divider, useTheme } from 'react-native-paper';
+import React, { useState } from 'react';
+import { View, SafeAreaView, StyleSheet, FlatList, Modal } from 'react-native';
+import { List, Text, IconButton, Divider, useTheme, Button } from 'react-native-paper';
 import { useAppContext } from './provider';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-/**
- * Este componente apresenta a lista de pessoas cadastradas.
- *
- * Cada item da lista, ao ser selecionado, apresenta um retorno
- * visual, para indicar que o item está selecionado, e
- * um botão que permite excluir o item da lista de pessoas.
- */
+
 export default function Lista() {
   const { pessoas, pessoaSelecionada, selecionarPessoa, removerPessoa } =
     useAppContext();
 
   const { colors, isV3 } = useTheme();
   const safeArea = useSafeAreaInsets();
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisibleEdit, setModalVisibleEdit] = useState(false);
+  const [pessoaSelecionadaLocal, setPessoaSelecionadaLocal] = useState(null);
 
-  /**
-   * Esta função é utilizada para renderizar um item da lista.
-   * Se o item da lista estiver selecionado, então adota
-   * uma cor de fundo diferente. Além disso, se o item
-   * estiver selecionado, apresenta um botão que permite
-   * excluir da lista de pessoas.
-   */
+    const openModalExcluir = (pessoa) => {
+    setPessoaSelecionadaLocal(pessoa);
+    setModalVisible(true);
+  };
+
+    const openModalEditar = (pessoa) => {
+      setPessoaSelecionadaLocal(pessoa);
+      setModalVisibleEdit(true);
+    }
+
+  const closeModalExcluir = () => {
+    setModalVisible(false);
+  };
+
+  const closeModalEditar = () => {
+    setModalVisibleEdit(false);
+  }
+
+    const confirmarRemocao = () => {
+      removerPessoa(pessoaSelecionadaLocal);
+      setPessoaSelecionadaLocal(null);
+      closeModalExcluir();
+  };
+
+    const confirmarEdicao = () => {
+      closeModalEditar();
+    }
+
   const renderItem = ({ item }) => {
     const selecionado = item.id == pessoaSelecionada?.id;
-    const BotaoRemover = () => {
-      return (
-        <IconButton
-          icon="trash-can-outline"
-          mode="contained"
-          onPress={() => removerPessoa(pessoaSelecionada)}
-        />
-      );
-    };
     return (
       <List.Item
         title={item.nome}
         style={selecionado && styles.item_selecionado}
-        onPress={() => selecionarPessoa(item)}
-        right={selecionado && BotaoRemover}></List.Item>
+        right={() => (
+          <View style={{ flexDirection: 'row' }}>
+            <IconButton
+              icon="trash-can-outline"
+              mode="contained"
+              onPress={() => openModalExcluir(item)}
+            />
+            <IconButton
+              icon="pencil-outline"
+              mode="contained"
+              onPress={() => openModalEditar(item)}
+            />
+          </View>
+        )}
+      />
     );
   };
   return (
@@ -71,6 +94,40 @@ export default function Lista() {
           </Text>
         )}
       />
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={closeModalExcluir}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalText}>
+              Tem certeza que deseja remover esta pessoa?
+            </Text>
+            <Button onPress={confirmarRemocao}>Sim</Button>
+            <Button onPress={closeModalExcluir}>Cancelar</Button>
+          </View>
+        </View>
+      </Modal>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisibleEdit}
+        onRequestClose={closeModalEditar}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalText}>
+              Modal de Edição
+            </Text>
+             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+            <Button onPress={confirmarEdicao}>Sim</Button>
+            <Button onPress={closeModalEditar}>Cancelar</Button>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -88,4 +145,18 @@ const styles = StyleSheet.create({
   item_selecionado: {
     backgroundColor: 'lightgray',
   },
+   modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10
+  },
+  modalText: {
+    marginBottom: 20,
+  }
 });

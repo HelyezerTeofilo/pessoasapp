@@ -1,9 +1,16 @@
-import React, { useState } from 'react';
-import { View, SafeAreaView, StyleSheet, FlatList, Modal } from 'react-native';
-import { List, Text, IconButton, Divider, useTheme, Button } from 'react-native-paper';
-import { useAppContext } from './provider';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
+import React, { useState } from "react";
+import { View, SafeAreaView, StyleSheet, FlatList, Modal } from "react-native";
+import {
+  List,
+  Text,
+  IconButton,
+  Divider,
+  useTheme,
+  Button,
+} from "react-native-paper";
+import { useAppContext } from "./provider";
+import ModalEditar from "./modalEditar";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function Lista() {
   const { pessoas, pessoaSelecionada, selecionarPessoa, removerPessoa } =
@@ -15,15 +22,14 @@ export default function Lista() {
   const [modalVisibleEdit, setModalVisibleEdit] = useState(false);
   const [pessoaSelecionadaLocal, setPessoaSelecionadaLocal] = useState(null);
 
-    const openModalExcluir = (pessoa) => {
+  const openModalExcluir = (pessoa) => {
     setPessoaSelecionadaLocal(pessoa);
     setModalVisible(true);
   };
 
-    const openModalEditar = (pessoa) => {
-      setPessoaSelecionadaLocal(pessoa);
-      setModalVisibleEdit(true);
-    }
+  const openModalEditar = () => {
+    setModalVisibleEdit(true);
+  };
 
   const closeModalExcluir = () => {
     setModalVisible(false);
@@ -31,38 +37,50 @@ export default function Lista() {
 
   const closeModalEditar = () => {
     setModalVisibleEdit(false);
-  }
-
-    const confirmarRemocao = () => {
-      removerPessoa(pessoaSelecionadaLocal);
-      setPessoaSelecionadaLocal(null);
-      closeModalExcluir();
   };
 
-    const confirmarEdicao = () => {
-      closeModalEditar();
-    }
+  const confirmarRemocao = () => {
+    removerPessoa(pessoaSelecionadaLocal);
+    setPessoaSelecionadaLocal(null);
+    closeModalExcluir();
+  };
 
   const renderItem = ({ item }) => {
     const selecionado = item.id == pessoaSelecionada?.id;
+
+    const BotaoRemover = () => {
+      return (
+        <IconButton
+          icon="trash-can-outline"
+          mode="contained"
+          onPress={() => openModalExcluir(item)}
+        />
+      );
+    };
+
+    const BotaoEditar = () => {
+      return (
+        <IconButton
+          icon="pencil-outline"
+          mode="contained"
+          onPress={() => openModalEditar(item)}
+        />
+      );
+    };
+
     return (
       <List.Item
         title={item.nome}
         style={selecionado && styles.item_selecionado}
-        right={() => (
-          <View style={{ flexDirection: 'row' }}>
-            <IconButton
-              icon="trash-can-outline"
-              mode="contained"
-              onPress={() => openModalExcluir(item)}
-            />
-            <IconButton
-              icon="pencil-outline"
-              mode="contained"
-              onPress={() => openModalEditar(item)}
-            />
-          </View>
-        )}
+        onPress={() => selecionarPessoa(item)}
+        right={() =>
+          selecionado ? (
+            <>
+              <BotaoEditar />
+              <BotaoRemover />
+            </>
+          ) : null
+        }
       />
     );
   };
@@ -110,53 +128,39 @@ export default function Lista() {
           </View>
         </View>
       </Modal>
-      <Modal
-        animationType="slide"
-        transparent={true}
+      <ModalEditar
         visible={modalVisibleEdit}
-        onRequestClose={closeModalEditar}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalText}>
-              Modal de Edição
-            </Text>
-             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-            <Button onPress={confirmarEdicao}>Sim</Button>
-            <Button onPress={closeModalEditar}>Cancelar</Button>
-            </View>
-          </View>
-        </View>
-      </Modal>
+        closeModal={closeModalEditar}
+      ></ModalEditar>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, minHeight:200 },
+  container: { flex: 1, minHeight: 200 },
   lista_mensagem_vazio: { marginHorizontal: 16 },
   cabecalho: {
     flex: 1,
-    flexDirection: 'column',
+    flexDirection: "column",
   },
   cabecalho_titulo: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   item_selecionado: {
-    backgroundColor: 'lightgray',
+    backgroundColor: "lightgray",
   },
-   modalContainer: {
+  modalContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     padding: 20,
-    borderRadius: 10
+    borderRadius: 10,
   },
   modalText: {
     marginBottom: 20,
-  }
+  },
 });

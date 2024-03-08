@@ -1,13 +1,6 @@
 import React, { useState } from "react";
 import { View, SafeAreaView, StyleSheet, FlatList, Modal } from "react-native";
-import {
-  List,
-  Text,
-  IconButton,
-  Divider,
-  useTheme,
-  Button,
-} from "react-native-paper";
+import { List, Text, IconButton, Divider, useTheme, Button } from "react-native-paper";
 import { useAppContext } from "./provider";
 import ModalEditar from "./modalEditar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -43,6 +36,15 @@ export default function Lista() {
     removerPessoa(pessoaSelecionadaLocal);
     setPessoaSelecionadaLocal(null);
     closeModalExcluir();
+  };
+
+  const getInicial = (name) => {
+    const iconeInicial = name
+      .split(" ")
+      .map((part) => part[0])
+      .join("")
+      .toUpperCase();
+    return <Text style={styles.iconeInicial}>{iconeInicial}</Text>;
   };
 
   const renderItem = ({ item }) => {
@@ -81,6 +83,7 @@ export default function Lista() {
             </>
           ) : null
         }
+        left={() => getInicial(item.nome)}
       />
     );
   };
@@ -162,5 +165,15 @@ const styles = StyleSheet.create({
   },
   modalText: {
     marginBottom: 20,
+  },
+  iconeInicial: {
+    backgroundColor: "purple",
+    color: "white",
+    borderRadius: 50,
+    width: 30,
+    height: 30,
+    lineHeight: 30,
+    textAlign: "center",
+    marginRight: 10,
   },
 });

@@ -10,6 +10,7 @@ import {
 } from "react-native-paper";
 import { useAppContext } from "./provider";
 import ModalEditar from "./modalEditar";
+import ModalExcluir from "./modalExcluir";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function Lista() {
@@ -22,8 +23,7 @@ export default function Lista() {
   const [modalVisibleEdit, setModalVisibleEdit] = useState(false);
   const [pessoaSelecionadaLocal, setPessoaSelecionadaLocal] = useState(null);
 
-  const openModalExcluir = (pessoa) => {
-    setPessoaSelecionadaLocal(pessoa);
+  const openModalExcluir = () => {
     setModalVisible(true);
   };
 
@@ -40,8 +40,7 @@ export default function Lista() {
   };
 
   const confirmarRemocao = () => {
-    removerPessoa(pessoaSelecionadaLocal);
-    setPessoaSelecionadaLocal(null);
+    removerPessoa(pessoaSelecionada);
     closeModalExcluir();
   };
 
@@ -112,26 +111,15 @@ export default function Lista() {
           </Text>
         )}
       />
-      <Modal
-        animationType="slide"
-        transparent={true}
+      <ModalExcluir
         visible={modalVisible}
-        onRequestClose={closeModalExcluir}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalText}>
-              Tem certeza que deseja remover esta pessoa?
-            </Text>
-            <Button onPress={confirmarRemocao}>Sim</Button>
-            <Button onPress={closeModalExcluir}>Cancelar</Button>
-          </View>
-        </View>
-      </Modal>
+        closeModal={closeModalExcluir}
+        confirmarRemocao={confirmarRemocao}
+      />
       <ModalEditar
         visible={modalVisibleEdit}
         closeModal={closeModalEditar}
-      ></ModalEditar>
+      />
     </View>
   );
 }
@@ -148,19 +136,5 @@ const styles = StyleSheet.create({
   },
   item_selecionado: {
     backgroundColor: "lightgray",
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  modalContent: {
-    backgroundColor: "white",
-    padding: 20,
-    borderRadius: 10,
-  },
-  modalText: {
-    marginBottom: 20,
   },
 });

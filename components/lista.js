@@ -1,13 +1,6 @@
 import React, { useState } from "react";
 import { View, SafeAreaView, StyleSheet, FlatList, Modal } from "react-native";
-import {
-  List,
-  Text,
-  IconButton,
-  Divider,
-  useTheme,
-  Button,
-} from "react-native-paper";
+import { List, Text, IconButton, Divider, useTheme, Button } from "react-native-paper";
 import { useAppContext } from "./provider";
 import ModalEditar from "./modalEditar";
 import ModalExcluir from "./modalExcluir";
@@ -36,6 +29,15 @@ export default function Lista() {
 
   const closeModalEditar = () => {
     setModalVisibleEdit(false);
+  };
+
+  const getInicial = (name) => {
+    const iconeInicial = name
+      .split(" ")
+      .map((part) => part[0])
+      .join("")
+      .toUpperCase();
+    return <Text style={styles.iconeInicial}>{iconeInicial}</Text>;
   };
 
   const renderItem = ({ item }) => {
@@ -74,6 +76,7 @@ export default function Lista() {
             </>
           ) : null
         }
+        left={() => getInicial(item.nome)}
       />
     );
   };
@@ -129,5 +132,29 @@ const styles = StyleSheet.create({
   },
   item_selecionado: {
     backgroundColor: "lightgray",
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 10,
+  },
+  modalText: {
+    marginBottom: 20,
+  },
+  iconeInicial: {
+    backgroundColor: "purple",
+    color: "white",
+    borderRadius: 50,
+    width: 30,
+    height: 30,
+    lineHeight: 30,
+    textAlign: "center",
+    marginRight: 10,
   },
 });

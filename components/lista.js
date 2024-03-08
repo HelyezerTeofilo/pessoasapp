@@ -21,7 +21,6 @@ export default function Lista() {
   const safeArea = useSafeAreaInsets();
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisibleEdit, setModalVisibleEdit] = useState(false);
-  const [pessoaSelecionadaLocal, setPessoaSelecionadaLocal] = useState(null);
 
   const openModalExcluir = () => {
     setModalVisible(true);
@@ -39,11 +38,6 @@ export default function Lista() {
     setModalVisibleEdit(false);
   };
 
-  const confirmarRemocao = () => {
-    removerPessoa(pessoaSelecionada);
-    closeModalExcluir();
-  };
-
   const renderItem = ({ item }) => {
     const selecionado = item.id == pessoaSelecionada?.id;
 
@@ -52,7 +46,7 @@ export default function Lista() {
         <IconButton
           icon="trash-can-outline"
           mode="contained"
-          onPress={() => openModalExcluir(item)}
+          onPress={() => openModalExcluir()}
         />
       );
     };
@@ -62,7 +56,7 @@ export default function Lista() {
         <IconButton
           icon="pencil-outline"
           mode="contained"
-          onPress={() => openModalEditar(item)}
+          onPress={() => openModalEditar()}
         />
       );
     };
@@ -114,7 +108,6 @@ export default function Lista() {
       <ModalExcluir
         visible={modalVisible}
         closeModal={closeModalExcluir}
-        confirmarRemocao={confirmarRemocao}
       />
       <ModalEditar
         visible={modalVisibleEdit}

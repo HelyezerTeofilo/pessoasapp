@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { Modal, View, StyleSheet, Text } from "react-native";
-import { TextInput, Button } from "react-native-paper";
+import { TextInput, Button, useTheme } from "react-native-paper";
 import { useAppContext } from "./provider";
 
 export default function ModalEditar({ visible, closeModal }) {
   const { editarPessoa, pessoaSelecionada } = useAppContext();
   const [nome, setNome] = useState("");
+  const { colors, isV3 } = useTheme();
 
   const confirmarAcao = () => {
     if (nome.length !== 0) {
@@ -38,8 +39,15 @@ export default function ModalEditar({ visible, closeModal }) {
           <View
             style={{ flexDirection: "row", justifyContent: "space-evenly" }}
           >
-            <Button onPress={confirmarAcao}>Salvar</Button>
-            <Button onPress={closeModal}>Cancelar</Button>
+            <Button
+              style={[styles.button, { backgroundColor: colors.primary }]}
+              onPress={confirmarAcao}
+            >
+              <Text style={{ color: "white" }}>Salvar</Text>
+            </Button>
+            <Button style={styles.button} mode="outlined" contentStyle={{overflow:"scroll"}} onPress={closeModal}>
+              <Text style={{ color: "black" }}>Cancelar</Text>
+            </Button>
           </View>
         </View>
       </View>
@@ -60,10 +68,15 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   modalText: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 20,
   },
   input_nome: {
     width: 250,
+  },
+  button: {
+    width: 100,
+    height: 40,
+    justifyContent: "center",
   },
 });

@@ -3,6 +3,7 @@ import { View, SafeAreaView, StyleSheet, FlatList, Modal } from "react-native";
 import { List, Text, IconButton, Divider, useTheme, Button } from "react-native-paper";
 import { useAppContext } from "./provider";
 import ModalEditar from "./modalEditar";
+import ModalExcluir from "./modalExcluir";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function Lista() {
@@ -13,10 +14,8 @@ export default function Lista() {
   const safeArea = useSafeAreaInsets();
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisibleEdit, setModalVisibleEdit] = useState(false);
-  const [pessoaSelecionadaLocal, setPessoaSelecionadaLocal] = useState(null);
 
-  const openModalExcluir = (pessoa) => {
-    setPessoaSelecionadaLocal(pessoa);
+  const openModalExcluir = () => {
     setModalVisible(true);
   };
 
@@ -30,12 +29,6 @@ export default function Lista() {
 
   const closeModalEditar = () => {
     setModalVisibleEdit(false);
-  };
-
-  const confirmarRemocao = () => {
-    removerPessoa(pessoaSelecionadaLocal);
-    setPessoaSelecionadaLocal(null);
-    closeModalExcluir();
   };
 
   const getInicial = (name) => {
@@ -55,7 +48,7 @@ export default function Lista() {
         <IconButton
           icon="trash-can-outline"
           mode="contained"
-          onPress={() => openModalExcluir(item)}
+          onPress={() => openModalExcluir()}
         />
       );
     };
@@ -65,7 +58,7 @@ export default function Lista() {
         <IconButton
           icon="pencil-outline"
           mode="contained"
-          onPress={() => openModalEditar(item)}
+          onPress={() => openModalEditar()}
         />
       );
     };
@@ -115,26 +108,14 @@ export default function Lista() {
           </Text>
         )}
       />
-      <Modal
-        animationType="slide"
-        transparent={true}
+      <ModalExcluir
         visible={modalVisible}
-        onRequestClose={closeModalExcluir}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalText}>
-              Tem certeza que deseja remover esta pessoa?
-            </Text>
-            <Button onPress={confirmarRemocao}>Sim</Button>
-            <Button onPress={closeModalExcluir}>Cancelar</Button>
-          </View>
-        </View>
-      </Modal>
+        closeModal={closeModalExcluir}
+      />
       <ModalEditar
         visible={modalVisibleEdit}
         closeModal={closeModalEditar}
-      ></ModalEditar>
+      />
     </View>
   );
 }
